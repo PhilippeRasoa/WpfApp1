@@ -101,6 +101,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="assets\croix_erreur.webp" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -120,6 +121,27 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SecurityAndMaintenance.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="62968-wrench-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="assets\coche_verte.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="green-check-mark-icon-green-tick-symbol-round-checkmark-sign-vector-vector-id1159270056.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="index.png" />
+    <Resource Include="assets\check.png" />
+    <Content Include="assets\check_ok1.svg" />
+    <Resource Include="assets\green_check_png_tree.png" />
+    <Resource Include="assets\wrench.png" />
+    <Resource Include="assets\green_check.png" />
+    <Content Include="check-circle-regular.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

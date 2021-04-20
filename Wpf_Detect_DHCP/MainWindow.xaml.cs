@@ -14,184 +14,372 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Diagnostics;
+using Microsoft.Win32;
+using System.IO;
 
 namespace NetDiag
 {
     class Program
     {
-        public static bool DhcpEnabled()
+        [DllImport("iphlpapi.dll", CharSet = CharSet.Auto)]
+        private static extern int GetBestInterface(UInt32 destAddr, out UInt32 bestIfIndex);
+
+        public static string GetGatewayForDestination(IPAddress destinationAddress)
         {
-            bool dhcpState;
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-            IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress[] addr = ipEntry.AddressList;
+            UInt32 destaddr = BitConverter.ToUInt32(destinationAddress.GetAddressBytes(), 0);
 
-            IPInterfaceProperties adapterProperties = nics[0].GetIPProperties();
-            IPv4InterfaceProperties p = adapterProperties.GetIPv4Properties();
-            dhcpState = p.IsDhcpEnabled;
-            //dhcpState = false;
+            uint interfaceIndex;
+            int result = GetBestInterface(destaddr, out interfaceIndex);
+            if (result != 0)
+                throw new Win32Exception(result);
 
-            return dhcpState;
-        }
-
-    // Show only IPv4 interfaces. IPv6 not handled
-    public static string DisplayIPv4NetworkInterfaces()
-        {
-            string textBox = "";
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-            //Console.WriteLine("IPv4 interface information for {0}.{1}",
-            //properties.HostName, properties.DomainName);
-            textBox += "IPv4 interface information for " + properties.HostName + "." + properties.DomainName + "\n";
-            //Console.WriteLine();
-
-            String strHostName = string.Empty;
-            IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress[] addr = ipEntry.AddressList;
-
-            if (addr.Length == 0)
+            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                textBox += "Pas d'adresse IPv4 détectées";
+                var niprops = ni.GetIPProperties();
+                if (niprops == null)
+                    continue;
+
+                var gateway = niprops.GatewayAddresses?.FirstOrDefault()?.Address;
+                if (gateway == null)
+                    continue;
+
+                if (ni.Supports(NetworkInterfaceComponent.IPv4))
+                {
+                    var v4props = niprops.GetIPv4Properties();
+                    if (v4props == null)
+                        continue;
+
+                    if (v4props.Index == interfaceIndex)
+                        return gateway.ToString();
+                }
+
+                if (ni.Supports(NetworkInterfaceComponent.IPv6))
+                {
+                    var v6props = niprops.GetIPv6Properties();
+                    if (v6props == null)
+                        continue;
+
+                    if (v6props.Index == interfaceIndex)
+                        return gateway.ToString();
+                }
             }
 
+            return null;
+        }
+
+        public static bool ShowIPAddressesBool()
+        {
+            string s = "";
+            bool dhcpEnabled;
+            DateTime localDate = DateTime.Now;
+            //s += "Analyse du réseau de ce PC en cours...\n";
+            //s += "============================================ \n";
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+
+            // for all network interfaces
             foreach (NetworkInterface adapter in nics)
             {
-                IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
-                IPAddressCollection dnsServers = adapterProperties.DnsAddresses;
-                //IPAddressInformation ipAddress;
-
-                GatewayIPAddressInformationCollection gwAddresses = adapterProperties.GatewayAddresses;
-                UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
-                IPv4InterfaceProperties p = adapterProperties.GetIPv4Properties();
-                IPAddressCollection dhcpAddresses = adapterProperties.DhcpServerAddresses;
-               
-                for (int i = 1; i < addr.Length; i++) //addr = [IPv6, IPv4, IPv6, IPv4,...]
+                // get only Ethernet and active adapters (VM included)
+                if (adapter.NetworkInterfaceType == NetworkInterfaceType.Ethernet && adapter.OperationalStatus == OperationalStatus.Up)
                 {
-                    foreach (IPAddress dhcpAddress in dhcpAddresses)
+                    //get its properties
+                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                    IPv4InterfaceProperties p = adapterProperties.GetIPv4Properties();
+
+                    // Network interface description
+                    //s += nic0.Description + "\n";
+
+                    // Check if its DHCP is enabled
+                    if (p.IsDhcpEnabled)
                     {
-                        foreach (GatewayIPAddressInformation gwAddress in gwAddresses)
+                        //get its properties
+                        UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+                        GatewayIPAddressInformationCollection addresses = adapterProperties.GatewayAddresses;
+                        GatewayIPAddressInformation address0 = addresses[0];
+                        //s += nic0.Description + " DHCP activé pour cette carte " + p.IsDhcpEnabled + "\n";
+                        IPAddress ipDestination = new IPAddress(0x0); // route par défaut 
+
+                        if (GetGatewayForDestination(ipDestination) == address0.Address.ToString()) //checks if NIC uses default route for Internet 
                         {
+                            //s += "ipDestination = " + GetGatewayForDestination(ipDestination) + "\n";
+                            //s += "passerelle par défaut : " + addresses[0].Address.ToString() + "\n\n";
+
+                            string lifeTimeFormat = "dddd, MMMM dd, yyyy  hh:mm:ss tt";
+
                             foreach (UnicastIPAddressInformation uni in uniCast)
                             {
-                                // Only display informatin for interfaces that support IPv4.
-                                if (adapter.Supports(NetworkInterfaceComponent.IPv4) == false)
+                                DateTime when;
+
+                                // Format the lifetimes as Sunday, February 16, 2003 11:33:44 PM
+                                // if en-us is the current culture.
+
+                                // Calculate the date and time at the end of the lifetimes.
+
+                                //when = DateTime.UtcNow + TimeSpan.FromSeconds(uni.AddressValidLifetime);
+                                //when = when.ToLocalTime();
+                                //s += "     Valid Life Time ...................... : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
+
+                                //when = DateTime.UtcNow + TimeSpan.FromSeconds(uni.AddressPreferredLifetime);
+                                //when = when.ToLocalTime();
+                                //s += "     Preferred life time .................. : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
+
+                                when = DateTime.UtcNow + TimeSpan.FromSeconds(uni.DhcpLeaseLifetime);
+                                //s += "utc now " + when.ToString() + "\n";
+
+                                when = when.ToLocalTime();
+                                //s += "local time " + when.ToString() + "\n";
+
+                                //s += "     DHCP Leased Life Time ................ : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
+
+                                if (uni.DhcpLeaseLifetime > 0 && when > localDate)
                                 {
-                                    continue;
+                                    dhcpEnabled = true;
+                                    return dhcpEnabled;
                                 }
-                                //Console.WriteLine(adapter.Description);
-                                textBox += adapter.Description + "\n";
+                                //return s;
+                                s += "\n";
+                                //break;  //only 1st adapter (Ethernet) matters, others are virtual machines
+                            }
 
-                                // Underline the description.
-                                //Console.WriteLine(String.Empty.PadLeft(adapter.Description.Length, '='));
-                                textBox += String.Empty.PadLeft(adapter.Description.Length, '=') + "\n";
+                        }
+                        //break; //only 1st adapter (Ethernet) matters, others are virtual machines
+                    }
 
-                                if (p == null)
+                }
+
+            }
+            //s += " Le DHCP n'est pas fonctionnel sur ce PC\n";
+            dhcpEnabled = false;
+            return dhcpEnabled;
+        }
+
+        static bool erreur = false;
+
+        public static string ShowIPAddresses()
+        {
+            string s = "";
+            //bool dhcpEnabled;
+            DateTime localDate = DateTime.Now;           
+
+            //Task t = Task.Run(() =>
+            //{
+            //    Task.Delay(5000).Wait();
+            //});
+
+                NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            //foreach (NetworkInterface adapter in nics)
+            //{
+            //    s += adapter.Description + "\n";
+            //}
+            try
+            {
+                // for all network interfaces
+                foreach (NetworkInterface adapter in nics)
+                {
+                    //s += nics[i].Description + "\n";
+
+                    // get only Ethernet and active adapters (VM included)
+                    if (adapter.NetworkInterfaceType == NetworkInterfaceType.Ethernet && adapter.OperationalStatus == OperationalStatus.Up)
+                    {
+                        //s += "okokokokokokok\n";
+
+                        //get its properties
+                        IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                        IPv4InterfaceProperties p = adapterProperties.GetIPv4Properties();
+
+                        // Network interface description
+                        //s += nic0.Description + "\n";
+
+                        // Check if its DHCP is enabled
+                        if (p.IsDhcpEnabled)
+                        {
+                            //get its properties
+                            UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+                            GatewayIPAddressInformationCollection addresses = adapterProperties.GatewayAddresses;
+                            GatewayIPAddressInformation address0 = addresses[0];
+                            //s += nic0.Description + " DHCP activé pour cette carte " + p.IsDhcpEnabled + "\n";
+                            IPAddress ipDestination = new IPAddress(0x0); // route par défaut 
+
+                            if (GetGatewayForDestination(ipDestination) == addresses[0].Address.ToString()) //checks if NIC uses default route for Internet 
+                            {
+                                //s += "ipDestination = " + GetGatewayForDestination(ipDestination) + "\n";
+                                //s += "passerelle par défaut : " + addresses[0].Address.ToString() + "\n\n";
+
+                                string lifeTimeFormat = "dddd, MMMM dd, yyyy  hh:mm:ss tt";
+
+                                foreach (UnicastIPAddressInformation uni in uniCast)
                                 {
-                                    //Console.WriteLine("No IPv4 information is available for this interface.");
-                                    textBox += "No IPv4 information is available for this interface.\n";
-                                    //Console.WriteLine();
-                                    continue;
-                                }
-                                // string myIP = Dns.GetHostEntry(hostName).AddressList[1].ToString();
-                                // Console.WriteLine("  Adresse IPv4 :" + myIP);
-
-                                //Console.WriteLine("  DHCP activé ............................. : {0}", p.IsDhcpEnabled);
-                                textBox += "  DHCP activé ............................. : " + p.IsDhcpEnabled + "\n";
-
-                                if (dhcpAddresses.Count > 0)
-                                {
-
-                                    //Console.WriteLine("  IP Adresse ............................ : {0} ", addr[i].ToString());
-                                    textBox += "  IP Adresse ............................ : " + addr[i].ToString() + "\n";
-
-
-
-                                    //Console.WriteLine("  Serveur DHCP ............................ : {0}", address.ToString());
-                                    textBox += "  Serveur DHCP ............................ : " + dhcpAddress.ToString() + "\n";
-
-
-
-                                    //Console.WriteLine("  Passerelle par défaut ......................... : {0}", address.Address.ToString());
-                                    textBox += "  Passerelle par défaut ......................... : " + gwAddress.Address.ToString() + "\n";
-
-
-                                }
-                                if (uniCast != null)
-                                {
-                                    string lifeTimeFormat = "dddd, MMMM dd, yyyy  hh:mm:ss tt";
-
                                     DateTime when;
 
-                                    //Console.WriteLine("  Unicast Address ......................... : {0}", uni.Address);
-                                    //textBox += "  Unicast Address ......................... : " + uni.Address + "\n";
+                                    // Format the lifetimes as Sunday, February 16, 2003 11:33:44 PM
+                                    // if en-us is the current culture.
 
-                                    when = DateTime.UtcNow + TimeSpan.FromSeconds(uni.AddressValidLifetime);
-                                    when = when.ToLocalTime();
-                                    //Console.WriteLine("  Durée de vie valide ...................... : {0}", when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture));
-                                    textBox += "  Durée de vie valide ...................... : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
+                                    // Calculate the date and time at the end of the lifetimes.
+
+                                    //when = DateTime.UtcNow + TimeSpan.FromSeconds(uni.AddressValidLifetime);
+                                    //when = when.ToLocalTime();
+                                    //s += "     Valid Life Time ...................... : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
 
                                     //when = DateTime.UtcNow + TimeSpan.FromSeconds(uni.AddressPreferredLifetime);
                                     //when = when.ToLocalTime();
-                                    ////Console.WriteLine("     Preferred life time .................. : {0}", when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture));
-                                    //textBox += "  Durée de vie préférée .................. : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
+                                    //s += "     Preferred life time .................. : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
 
                                     when = DateTime.UtcNow + TimeSpan.FromSeconds(uni.DhcpLeaseLifetime);
+                                    //s += "utc now " + when.ToString() + "\n";
+
                                     when = when.ToLocalTime();
-                                    //Console.WriteLine("  Durée de vie du bail DHCP ................ : {0}", when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture));
-                                    textBox += "  Durée de vie du bail DHCP ................ : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
-                                    break;
+                                    //s += "local time " + when.ToString() + "\n";
+
+                                    //s += "     DHCP Leased Life Time ................ : " + when.ToString(lifeTimeFormat, System.Globalization.CultureInfo.CurrentCulture) + "\n";
+
+                                    if (uni.DhcpLeaseLifetime > 0 && when > localDate)
+                                    {
+                                        s += "XXXX est compatible\n";
+                                        return s;
+                                    }
+
+                                    s += "\n";
+                                    //break;  //only 1st adapter (Ethernet) matters, others are virtual machines
                                 }
+
                             }
+                            //break; //only 1st adapter (Ethernet) matters, others are virtual machines
                         }
+
                     }
                 }
+                s += "Pour accéder aux services Citypassenger, contacter le support technique\n";
+                return s;
             }
-            //Console.WriteLine(textBox);
-            return textBox;
+            catch(Exception ex)
+            {
+                erreur = true; 
+                s = "Un problème est survenu lors du lancement de l'application";
+                return s;
+            }
         }
+        //public static bool DhcpEnabled()
+        //{
+        //    //bool[] dhcpState;
+        //    int i = 0;
+        //    NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+
+        //    // for all network interfaces
+        //    for (i = 0; i < nics.Length; i++)
+        //    {
+        //        // get only Ethernet and active adapters
+        //        if (nics[i].NetworkInterfaceType == NetworkInterfaceType.Ethernet && nics[i].OperationalStatus == OperationalStatus.Up)
+        //        {
+        //            NetworkInterface nic0 = nics[i];
+        //            IPInterfaceProperties adapterProperties = nic0.GetIPProperties();
+        //            IPv4InterfaceProperties p = adapterProperties.GetIPv4Properties();
+        //            return p.IsDhcpEnabled;
+        //        }
+        //    }
+        //    return false;
+        //    //return dhcpState[0]; // get only 1st interface DHCP state which should be the Ethernet wired connection instead of VM
+        //}
+
+
     }
 }
-
-
 
 namespace Wpf_Detect_DHCP
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
+    /// 
+    
     public partial class MainWindow : Window
     {
+        private bool _show_image;
+
+        public bool ShowButton
+        {
+            get { return _show_image; }
+        }
         public MainWindow()
         {
-            string var = NetDiag.Program.DisplayIPv4NetworkInterfaces();
+            //string var = NetDiag.Program.GetPhysical();
+           
+            string var = NetDiag.Program.ShowIPAddresses();
             InitializeComponent();
+            _show_image = false;
             displayStr(var);
+
         }
+
+        //private void getImg()
+        //{
+        //    Image img = new Image();
+        //    if (NetDiag.Program.ShowIPAddressesBool())
+        //    {
+        //        imagePath = "assets/check_ok1.svg";
+        //    }
+        //    else
+        //    {
+        //        imagePath = "assets/croix_erreur.png";
+        //    }
+        //}
+        
+        
         private void displayStr(string s)
         {
             rapport_dhcp.Text = s;
-            if (NetDiag.Program.DhcpEnabled()) // if DHCP enabled
+            if (NetDiag.Program.ShowIPAddressesBool())
             {
-                button_name.Content = "DHCP activé. Cliquer pour un diagnostique";
+                txtBeforeUrl.Text = "Voir les produits Citypassenger sur ";
+                urlText.Text = "Voir nos produits";
+                
             }
-            else // if DHCP disabled
+            else
             {
-                button_name.Content = "DHCP désactivé. Cliquer pour un diagnostique";
+                txtBeforeUrl.Text = "";
+                urlText.Text = "Contacter le support technique de Citypassenger";
             }
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Process p = new Process();
+        //    p.StartInfo.UseShellExecute = true;
+        //    if (NetDiag.Program.ShowIPAddressesBool()) // if DHCP enabled
+        //    {
+        //        p.StartInfo.FileName = "https://www.citypassenger.com/dhcpok";
+        //        p.Start();
+        //    }
+        //    else // if DHCP disabled
+        //    {
+        //        p.StartInfo.FileName = "https://www.citypassenger.com/dhcpok";
+        //        p.Start();
+        //    }
+        //}
+
+        private void Hyperlink_RequestNavigate(object sender,
+                                       System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            if (NetDiag.Program.DhcpEnabled()) // if DHCP enabled
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = true;
+            _show_image = NetDiag.Program.ShowIPAddressesBool();
+            if (NetDiag.Program.ShowIPAddressesBool()) // if DHCP enabled
             {
-                System.Diagnostics.Process.Start("https://www.citypassenger.com/dhcpok");
+                //image1.Visibility = Visibility.Visible;
+                //System.Windows.Visibility vis = new System.Windows.Visibility();
+                //image1.Visibility = "Hidden";
+                p.StartInfo.FileName = "https://www.citypassenger.com/dhcpok";
+                p.Start();
             }
             else // if DHCP disabled
             {
-                System.Diagnostics.Process.Start("https://www.citypassenger.com/dhcpfail");
+                p.StartInfo.FileName = "https://www.citypassenger.com/dhcpfail";
+                p.Start();
             }
         }
-    }  
+    }
 }
 
 

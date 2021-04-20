@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:Wpf_Detect_DHCP"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
