@@ -259,6 +259,7 @@ namespace NetDiag
                 erreur = true; 
                 s = "Un problème est survenu lors du lancement de l'application";
                 return s;
+
             }
         }
 
