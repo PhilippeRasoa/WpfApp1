@@ -66,6 +66,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         fetch-depth: 0
 
     # Install the .NET Core workload
