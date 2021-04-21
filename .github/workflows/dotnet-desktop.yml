@@ -58,29 +58,29 @@ jobs:
     env:
       Solution_Name: WpfApp1                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: WpfApp1\WpfApp1\WpfApp1.csproj                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.                 
-      # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      # Wap_Project_Directory:  # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      # Wap_Project_Path:  # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
 
 
     steps:
+    - name: ACTIONS_ALLOW_UNSECURE_COMMANDS
+      id: ACTIONS_ALLOW_UNSECURE_COMMANDS
+      run: echo 'ACTIONS_ALLOW_UNSECURE_COMMANDS=true' >> $GITHUB_ENV
+    
     - name: Checkout
       uses: actions/checkout@v2
       with:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         fetch-depth: 0
 
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         dotnet-version: 5.0.x
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@2008f912f56e61277eefaac6d1888b750582aa16
-      with:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
