@@ -7,13 +7,7 @@
         xmlns:local="clr-namespace:Wpf_Detect_DHCP"
         mc:Ignorable="d"
         Title="CityPassenger" Height="385.359" Width="720.442" Icon="index.png">
-    <Window.DataContext>
-        <VM:MainWindow />
-    </Window.DataContext>
-
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="Converter" />
-    </Window.Resources>
+    
     <Grid Margin="18,10,19,23" VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="326*"/>
@@ -38,6 +32,5 @@
                 <TextBlock Name="urlText" Text="Click here" />
             </Hyperlink>
         </TextBlock>
-        <Image x:Name="image1" Margin="270,135,294,68" Visibility="{Binding Path=ShowButton, Converter={StaticResource Converter}}" Source="assets/green_check.png" HorizontalAlignment="Center" Stretch="Uniform" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

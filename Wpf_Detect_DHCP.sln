@@ -5,23 +5,7 @@ VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wpf_Detect_DHCP", "Wpf_Detect_DHCP\Wpf_Detect_DHCP.csproj", "{A7F11CE1-1267-4C97-B7DF-A630E238322B}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Exe_Detect_DHCP", "Exe_Detect_DHCP\Exe_Detect_DHCP.vdproj", "{3BCE0EBA-D91D-49D1-BC1E-9DB8027EB233}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Exe2_Detect_DHCP", "Exe2_Detect_DHCP\Exe2_Detect_DHCP.vdproj", "{053B0CAC-1446-46C2-95E3-AC3B74E2CAB5}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Exe3_Detect_DHCP", "Exe3_Detect_DHCP\Exe3_Detect_DHCP.vdproj", "{950704F5-C438-4CC3-A665-71E2C912BEFD}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Ex5_Detect_DHCP", "Ex5_Detect_DHCP\Ex5_Detect_DHCP.vdproj", "{63B68E21-C9E6-4D53-BFF0-4732955513FB}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Ex6_DHCP", "Ex6_DHCP\Ex6_DHCP.vdproj", "{C360AACB-A9EE-41E9-89F6-6C82740556F6}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup1", "Setup1\Setup1.vdproj", "{BBAFE1F8-E499-40C5-B0A8-19CC817305B3}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Ex7_Detect_dhcp", "Ex7_Detect_dhcp\Ex7_Detect_dhcp.vdproj", "{6EC0FF8D-BF30-4385-9EEF-292ACCEFDDF8}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Ex8_Detect_dhcp", "Ex8_Detect_dhcp\Ex8_Detect_dhcp.vdproj", "{C829EEF6-FE9E-405C-B5BF-5A890CA8E313}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Ex9_detect_dhcp", "Ex9_detect_dhcp\Ex9_detect_dhcp.vdproj", "{61155735-A47C-41C1-9172-622C607942DD}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Ex1_Detect_dhcp", "Ex1_Detect_dhcp\Ex1_Detect_dhcp.vdproj", "{4CDDA424-EEA0-4EBD-91D0-14DA8AAB8E57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,26 +16,8 @@ Global
 		{A7F11CE1-1267-4C97-B7DF-A630E238322B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7F11CE1-1267-4C97-B7DF-A630E238322B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7F11CE1-1267-4C97-B7DF-A630E238322B}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{3BCE0EBA-D91D-49D1-BC1E-9DB8027EB233}.Debug|Any CPU.ActiveCfg = Release
-		{3BCE0EBA-D91D-49D1-BC1E-9DB8027EB233}.Release|Any CPU.ActiveCfg = Release
-		{3BCE0EBA-D91D-49D1-BC1E-9DB8027EB233}.Release|Any CPU.Build.0 = Release
-		{053B0CAC-1446-46C2-95E3-AC3B74E2CAB5}.Debug|Any CPU.ActiveCfg = Release
-		{053B0CAC-1446-46C2-95E3-AC3B74E2CAB5}.Release|Any CPU.ActiveCfg = Release
-		{950704F5-C438-4CC3-A665-71E2C912BEFD}.Debug|Any CPU.ActiveCfg = Debug
-		{950704F5-C438-4CC3-A665-71E2C912BEFD}.Release|Any CPU.ActiveCfg = Release
-		{63B68E21-C9E6-4D53-BFF0-4732955513FB}.Debug|Any CPU.ActiveCfg = Debug
-		{63B68E21-C9E6-4D53-BFF0-4732955513FB}.Release|Any CPU.ActiveCfg = Release
-		{C360AACB-A9EE-41E9-89F6-6C82740556F6}.Debug|Any CPU.ActiveCfg = Release
-		{C360AACB-A9EE-41E9-89F6-6C82740556F6}.Release|Any CPU.ActiveCfg = Release
-		{BBAFE1F8-E499-40C5-B0A8-19CC817305B3}.Debug|Any CPU.ActiveCfg = Debug
-		{BBAFE1F8-E499-40C5-B0A8-19CC817305B3}.Release|Any CPU.ActiveCfg = Release
-		{6EC0FF8D-BF30-4385-9EEF-292ACCEFDDF8}.Debug|Any CPU.ActiveCfg = Release
-		{6EC0FF8D-BF30-4385-9EEF-292ACCEFDDF8}.Debug|Any CPU.Build.0 = Release
-		{6EC0FF8D-BF30-4385-9EEF-292ACCEFDDF8}.Release|Any CPU.ActiveCfg = Release
-		{C829EEF6-FE9E-405C-B5BF-5A890CA8E313}.Debug|Any CPU.ActiveCfg = Release
-		{C829EEF6-FE9E-405C-B5BF-5A890CA8E313}.Release|Any CPU.ActiveCfg = Release
-		{61155735-A47C-41C1-9172-622C607942DD}.Debug|Any CPU.ActiveCfg = Debug
-		{61155735-A47C-41C1-9172-622C607942DD}.Release|Any CPU.ActiveCfg = Release
+		{4CDDA424-EEA0-4EBD-91D0-14DA8AAB8E57}.Debug|Any CPU.ActiveCfg = Release
+		{4CDDA424-EEA0-4EBD-91D0-14DA8AAB8E57}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

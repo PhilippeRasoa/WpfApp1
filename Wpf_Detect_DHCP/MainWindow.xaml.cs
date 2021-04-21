@@ -261,6 +261,7 @@ namespace NetDiag
                 return s;
             }
         }
+
         //public static bool DhcpEnabled()
         //{
         //    //bool[] dhcpState;
@@ -282,8 +283,6 @@ namespace NetDiag
         //    return false;
         //    //return dhcpState[0]; // get only 1st interface DHCP state which should be the Ethernet wired connection instead of VM
         //}
-
-
     }
 }
 
@@ -296,19 +295,16 @@ namespace Wpf_Detect_DHCP
     
     public partial class MainWindow : Window
     {
-        private bool _show_image;
+        //private bool _show_image;
 
-        public bool ShowButton
-        {
-            get { return _show_image; }
-        }
+        //public bool ShowButton
+        //{
+        //    get { return _show_image; }
+        //}
         public MainWindow()
-        {
-            //string var = NetDiag.Program.GetPhysical();
-           
+        {         
             string var = NetDiag.Program.ShowIPAddresses();
             InitializeComponent();
-            _show_image = false;
             displayStr(var);
 
         }
@@ -364,7 +360,7 @@ namespace Wpf_Detect_DHCP
         {
             Process p = new Process();
             p.StartInfo.UseShellExecute = true;
-            _show_image = NetDiag.Program.ShowIPAddressesBool();
+            //_show_image = NetDiag.Program.ShowIPAddressesBool();
             if (NetDiag.Program.ShowIPAddressesBool()) // if DHCP enabled
             {
                 //image1.Visibility = Visibility.Visible;
