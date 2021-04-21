@@ -60,12 +60,10 @@ jobs:
       Test_Project_Path: WpfApp1\WpfApp1\WpfApp1.csproj                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       # Wap_Project_Directory:  # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       # Wap_Project_Path:  # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      
 
 
     steps:
-    - name: ACTIONS_ALLOW_UNSECURE_COMMANDS
-      id: ACTIONS_ALLOW_UNSECURE_COMMANDS
-      run: echo 'ACTIONS_ALLOW_UNSECURE_COMMANDS=true' >> $GITHUB_ENV
     
     - name: Checkout
       uses: actions/checkout@v2
@@ -86,6 +84,11 @@ jobs:
     - name: Execute unit tests
       run: dotnet test
       
+      
+    - name: Set environment variables
+      run: |
+        echo "PR_AUTHOR=${{ github.event.pull_request.user.login }}" >> $GITHUB_ENV 
+        echo "PR_AUTHOR=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
