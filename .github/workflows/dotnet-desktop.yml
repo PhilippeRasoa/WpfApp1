@@ -94,7 +94,7 @@ jobs:
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         Configuration: ${{ matrix.configuration }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
