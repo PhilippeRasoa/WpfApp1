@@ -56,10 +56,10 @@ jobs:
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
-      Solution_Name: WpfApp1.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: WpfApp1\WpfApp1.csproj                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      #Wap_Project_Directory: WpfApp1/Wap/ # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      #Wap_Project_Path: WpfApp1/Wap/ # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      Solution_Name: Wpf_Detect_DHCP.sln                          # Replace with your solution name, i.e. MyWpfApp.sln.
+      Test_Project_Path: Wpf_Detect_DHCP\Wpf_Detect_DHCP.csproj                  # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      Wap_Project_Directory: Wap_detect_dhcp # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Path: Wap_detect_dhcp\Wap_detect_dhcp.wapproj # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
       
 
 
