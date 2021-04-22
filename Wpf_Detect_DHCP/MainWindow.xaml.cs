@@ -305,6 +305,16 @@ namespace Wpf_Detect_DHCP
         public MainWindow()
         {         
             string var = NetDiag.Program.ShowIPAddresses();
+            //if (NetDiag.Program.ShowIPAddressesBool()){
+            //    image1.Visibility = Visibility.Visible;
+
+            //}
+            //else
+            //{
+            //    image1.Visibility = Visibility.Visible;
+            //}
+            //image1.Visibility = Visibility.Visible;
+
             InitializeComponent();
             displayStr(var);
 
