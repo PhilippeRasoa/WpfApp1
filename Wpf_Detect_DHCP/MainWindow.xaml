@@ -1,0 +1,36 @@
+﻿<Window x:Class="Wpf_Detect_DHCP.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:VM="clr-namespace:Wpf_Detect_DHCP"
+        xmlns:local="clr-namespace:Wpf_Detect_DHCP"
+        mc:Ignorable="d"
+        Title="CityPassenger" Height="385.359" Width="720.442" Icon="index.png">
+    
+    <Grid Margin="18,10,19,23" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="326*"/>
+            <ColumnDefinition Width="349*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock
+            Name="rapport_dhcp"
+            Foreground="Navy"           
+            FontStretch="UltraExpanded"
+            FontStyle="Italic"       
+            Text ="Bonjour"
+            TextWrapping="Wrap"
+            FontSize="16"
+            Height="Auto"
+            Margin="114,87,138,68" Grid.ColumnSpan="2"
+            HorizontalAlignment="Center">
+        </TextBlock>
+        <TextBlock Margin="58,292,82,-5" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" FontSize="16" Height="34"  Width="535" Grid.ColumnSpan="2">
+            <Run Text="  "/>
+            <TextBlock Name="txtBeforeUrl"  Text="txtBeforeUrl " HorizontalAlignment="Center"/>
+            <Hyperlink NavigateUri="http://www.google.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                <TextBlock Name="urlText" Text="Click here" />
+            </Hyperlink>
+        </TextBlock>
+    </Grid>
+</Window>
