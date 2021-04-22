@@ -9,7 +9,7 @@
   <Identity
     Name="78714973-15e5-45bb-9ad6-29fb31f3a203"
     Publisher="CN=HYSTOU"
-    Version="1.0.1.0" />
+    Version="1.0.2.0" />
 
   <Properties>
     <DisplayName>Wap_detect_dhcp</DisplayName>
