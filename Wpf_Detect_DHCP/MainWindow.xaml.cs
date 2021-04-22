@@ -341,7 +341,7 @@ namespace Wpf_Detect_DHCP
             {
                 txtBeforeUrl.Text = "Voir les produits Citypassenger sur ";
                 urlText.Text = "Voir nos produits";
-                
+               
             }
             else
             {
