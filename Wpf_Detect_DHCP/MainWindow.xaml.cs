@@ -347,6 +347,7 @@ namespace Wpf_Detect_DHCP
             {
                 txtBeforeUrl.Text = "";
                 urlText.Text = "Contacter le support technique de Citypassenger";
+
             }
         }
 
